@@ -1,0 +1,15 @@
+.idea/
+*.iml
+*.pem
+bin/
+dist/
+docs/swagger.json
+docs/swagger.yaml
+docs/docs.go
+site/
+config.yml
+coverage.txt
+todo.txt
+!docs/config.yml
+node_modules
+package-lock.json
