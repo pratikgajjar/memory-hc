@@ -7,7 +7,7 @@ BUILD_TIME=$(shell date '+%Y%m%d-%H%M%S')
 BINARY_NAME=memory_hc
 BIN_OUT_DIR=bin
 
-all: build ## Build binary (with tests)
+all: lint build ## Build binary (with tests)
 
 clean: ## cleans output directory
 	$(shell rm -rf $(BIN_OUT_DIR)/*)
@@ -28,8 +28,8 @@ build:  ## Build binary
 # test:  ## run tests
 # 	go test -v -coverprofile=coverage.txt -covermode=atomic -cover ./...
 
-# lint: build ## run golangcli-lint checks
-# 	$(shell go env GOPATH)/bin/golangci-lint run
+lint: build ## run golangcli-lint checks
+	$(shell go env GOPATH)/bin/golangci-lint run
 
 run: build ## Build and run binary
 	./$(BIN_OUT_DIR)/$(BINARY_NAME)
