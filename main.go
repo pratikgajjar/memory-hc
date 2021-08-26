@@ -35,10 +35,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Ok!")
 }
 
-func main() {
-	flag.Parse()
+//nolint:gochecknoinits
+func init() {
 	flag.StringVar(&defaultConfig.HTTPAddr, "http.addr", ":8080", "HTTP listen address")
 	flag.Float64Var(&defaultConfig.MemThreshold, "mem.threshold", 75, "Healthy Memory Threshold")
+}
+
+func main() {
+	flag.Parse()
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(defaultConfig.HTTPAddr, nil))
 }
