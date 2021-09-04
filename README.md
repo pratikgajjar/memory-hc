@@ -1,8 +1,8 @@
 # memory-hc
-GoLang healthcheck server based on memory usuage
+GoLang health check server based on memory usage
 
 
-```bash
+```shell
 ➜  memory-hc git:(develop) ✗ ./memory-hc -h
 Usage of ./memory-hc:
   -cli
