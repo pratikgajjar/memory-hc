@@ -14,6 +14,7 @@ type Config struct {
 	HTTPAddr     string
 	MemThreshold float64
 	Cli          bool
+	Unhealthy    bool
 }
 
 //nolint:gochecknoglobals
@@ -27,7 +28,7 @@ func isHealthy() (bool, error) {
 
 	memPer := float64(mem.Used) / float64(mem.Total) * 100
 
-	fmt.Println(memPer, mem.Used, mem.Total, mem.Free)
+	log.Println("Mem Per%", memPer, "Mem Used", mem.Used, "Mem Total", mem.Total, "Mem Free", mem.Free)
 
 	if memPer > defaultConfig.MemThreshold {
 		return false, nil
@@ -50,22 +51,30 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func init() {
 	flag.StringVar(&defaultConfig.HTTPAddr, "http.addr", ":8080", "HTTP listen address")
 	flag.Float64Var(&defaultConfig.MemThreshold, "mem.threshold", 75, "Healthy Memory Threshold")
+	flag.BoolVar(&defaultConfig.Unhealthy, "unhealthy", false, "Exit with code 0 on unhealthy")
 	flag.BoolVar(&defaultConfig.Cli, "cli", false, "Cli Only")
 }
 
 func main() {
 	flag.Parse()
 
+	exCode := 0
+
+	if defaultConfig.Unhealthy {
+		exCode = 1
+	}
+
 	if defaultConfig.Cli {
 		h, _ := isHealthy()
 
 		if h {
-			os.Exit(0)
+			os.Exit(exCode)
 		}
 
-		os.Exit(1)
+		os.Exit((exCode + 1) % 2)
 	}
 
+	log.Println("Starting HTTP server on", defaultConfig.HTTPAddr)
 	http.HandleFunc("/", handler)
 
 	log.Fatal(http.ListenAndServe(defaultConfig.HTTPAddr, nil))
